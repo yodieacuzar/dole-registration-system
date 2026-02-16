@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DOLE Registration System</title>
+<link rel="stylesheet" href="styles.css">
+
+<!-- XLSX Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+  display: block;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 10px;
+}
+
+.modal-body {
+  margin-bottom: 15px;
+}
+
+.modal-body label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.modal-body input,
+.modal-body select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.modal-body input:focus,
+.modal-body select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-footer button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-save {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-save:hover {
+  background-color: #218838;
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background-color: #5a6268;
+}
+</style>
+
+</head>
+
+<body>
+<div class="container">
+
+<h1>DOLE Registration System</h1>
+
+<!-- Manual Entry -->
+<h3>Manual Entry</h3>
+<form id="orgForm" class="form-container">
+
+  <div class="form-row">
+    <input id="district" placeholder="District" required>
+    <input id="area" placeholder="Area">
+    <input id="barangay" placeholder="Barangay">
+  </div>
+
+  <div class="form-row">
+    <input id="orgName" placeholder="Organization Name" required>
+    <input id="presidentName" placeholder="President's Name">
+    <input id="contactNumber" placeholder="Contact Number">
+  </div>
+
+  <div class="form-row">
+    <input id="address" placeholder="Address">
+    <input id="male" type="number" placeholder="Male">
+    <input id="female" type="number" placeholder="Female">
+  </div>
+
+  <div class="form-row">
+    <input id="membersList" placeholder="Members List (Google Sheet Link)">
+    <input id="totalMembers" type="number" placeholder="Total no. of Members">
+    <input id="status" placeholder="Status (e.g., DOLE REGISTERED)">
+  </div>
+
+  <div class="form-row">
+    <input id="dateRegisteredDOLE" type="date">
+    <input id="doleRegNo" placeholder="DOLE Registration No.">
+    <input id="yearRegistered" type="number" placeholder="Date Registered (year)">
+  </div>
+
+  <button type="submit" class="btn-submit">Save Record</button>
+</form>
+
+<hr>
+
+<!-- Excel Import -->
+<h3>Import Excel File</h3>
+<div class="form-row">
+  <input type="file" id="excelFile" accept=".xlsx,.xls">
+  <button id="importBtn">Import Excel</button>
+</div>
+
+<hr>
+
+<!-- District Filter -->
+<h3>Filter by District</h3>
+<select id="districtFilter">
+  <option value="">All Districts</option>
+  <option value="1">District 1</option>
+  <option value="2">District 2</option>
+  <option value="3">District 3</option>
+  <option value="4">District 4</option>
+  <option value="5">District 5</option>
+  <option value="6">District 6</option>
+</select>
+
+<!-- Search Bar -->
+<h3>Search Records</h3>
+<input type="text" id="searchInput" placeholder="Search by Organization Name, President, Contact, or Barangay..." style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+
+<!-- Duplicate Management -->
+<h3>Duplicate Management</h3>
+<button id="findDuplicatesBtn" style="background-color: #ff9800; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Find & Remove Duplicates</button>
+
+<hr>
+<h3>Summary</h3>
+<div class="summary-container">
+  <div class="summary-item">
+    ✅ DOLE REGISTERED: <b id="sumRegistered">0</b>
+  </div>
+  <div class="summary-item">
+    ❌ NOT REGISTERED: <b id="sumNotRegistered">0</b>
+  </div>
+</div>
+
+<hr>
+
+<!-- Table -->
+<h3>Database Records</h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+  <th>District</th>
+  <th>Area</th>
+  <th>Barangay</th>
+  <th>Organization Name</th>
+  <th>President</th>
+  <th>Contact</th>
+  <th>Address</th>
+  <th>Male</th>
+  <th>Female</th>
+  <th>Members List</th>
+  <th>Total</th>
+  <th>Status</th>
+  <th>Date</th>
+  <th>DOLE No.</th>
+  <th>Year</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody id="dataTable"></tbody>
+</table>
+</div>
+
+<!-- Pagination Controls -->
+<div class="pagination-container">
+  <button id="prevBtn" onclick="previousPage()">← Previous</button>
+  <div id="pageNumbers" class="page-numbers"></div>
+  <button id="nextBtn" onclick="nextPage()">Next →</button>
+</div>
+<div class="page-info">
+  <p>Page <b id="currentPage">1</b> of <b id="totalPages">1</b> | Showing <b id="recordsPerPage">0</b> records</p>
+</div>
+
+</div>
+
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Edit Record</div>
+    <div class="modal-body">
+      <label>District:</label>
+      <input id="modal_district" type="text">
+      
+      <label>Area:</label>
+      <input id="modal_area" type="text">
+      
+      <label>Barangay:</label>
+      <input id="modal_barangay" type="text">
+      
+      <label>Organization Name:</label>
+      <input id="modal_orgName" type="text">
+      
+      <label>President's Name:</label>
+      <input id="modal_presidentName" type="text">
+      
+      <label>Contact Number:</label>
+      <input id="modal_contactNumber" type="text">
+      
+      <label>Address:</label>
+      <input id="modal_address" type="text">
+      
+      <label>Male:</label>
+      <input id="modal_male" type="number">
+      
+      <label>Female:</label>
+      <input id="modal_female" type="number">
+      
+      <label>Members List (Google Sheet Link):</label>
+      <input id="modal_membersList" type="text">
+      
+      <label>Total Members:</label>
+      <input id="modal_totalMembers" type="number">
+      
+      <label>Status:</label>
+      <input id="modal_status" type="text" placeholder="e.g., DOLE REGISTERED">
+      
+      <label>Date Registered to DOLE:</label>
+      <input id="modal_dateRegisteredDOLE" type="date">
+      
+      <label>DOLE Registration No.:</label>
+      <input id="modal_doleRegNo" type="text">
+      
+      <label>Year Registered:</label>
+      <input id="modal_yearRegistered" type="text">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+      <button class="btn-save" onclick="saveEditedRecord()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  updateDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* Firebase Config */
+const firebaseConfig = {
+  apiKey: "AIzaSyAz1-t_93aCR7Hk-1NQ-R6jcm3Rw4yEHZM",
+  authDomain: "dole-registration-system.firebaseapp.com",
+  projectId: "dole-registration-system"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+
+// Pagination variables
+let allRecords = [];
+let filteredRecords = [];
+let currentPage = 1;
+const recordsPerPage = 10;
+
+/* Manual Save */
+$("orgForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  await addDoc(collection(db, "organizations"), {
+    district: $("district").value,
+    area: $("area").value,
+    barangay: $("barangay").value,
+    orgName: $("orgName").value,
+    presidentName: $("presidentName").value,
+    contactNumber: $("contactNumber").value,
+    address: $("address").value,
+    male: Number($("male").value || 0),
+    female: Number($("female").value || 0),
+    membersList: $("membersList").value,
+    totalMembers: Number($("totalMembers").value || 0),
+    status: $("status").value,
+    dateRegisteredDOLE: $("dateRegisteredDOLE").value,
+    doleRegNo: $("doleRegNo").value,
+    yearRegistered: $("yearRegistered").value,
+    createdAt: new Date()
+  });
+
+  alert("✅ Record Saved!");
+  e.target.reset();
+  loadData();
+});
+
+/* Load Data + Summary */
+async function loadData() {
+  const snap = await getDocs(collection(db, "organizations"));
+  const searchTerm = $("searchInput").value.toLowerCase();
+  const selected = $("districtFilter").value;
+  
+  allRecords = [];
+  filteredRecords = [];
+  let registered = 0;
+  let notRegistered = 0;
+
+  snap.forEach(s => {
+    const d = s.data();
+    allRecords.push({ id: s.id, data: d });
+
+    // Apply district filter
+    if (selected && selected !== "") {
+      const districtValue = d.district ? d.district.toString().trim() : "";
+      const districtNumber = districtValue.replace(/\D/g, '');
+      if (districtValue !== selected && districtNumber !== selected) return;
+    }
+
+    // Apply search filter
+    if (searchTerm) {
+      const searchFields = [
+        d.orgName,
+        d.presidentName,
+        d.contactNumber,
+        d.barangay,
+        d.address,
+        d.area
+      ].join(" ").toLowerCase();
+      
+      if (!searchFields.includes(searchTerm)) return;
+    }
+
+    filteredRecords.push({ id: s.id, data: d });
+
+    if (d.status === "DOLE REGISTERED") registered++;
+    else notRegistered++;
+  });
+
+  $('sumRegistered').textContent = registered;
+  $('sumNotRegistered').textContent = notRegistered;
+  
+  // Reset to page 1 when filter changes
+  currentPage = 1;
+  renderTable();
+  updatePagination();
+}
+
+/* Render Table for Current Page */
+function renderTable() {
+  $('dataTable').innerHTML = "";
+  
+  const startIdx = (currentPage - 1) * recordsPerPage;
+  const endIdx = startIdx + recordsPerPage;
+  const pageRecords = filteredRecords.slice(startIdx, endIdx);
+  
+  $('recordsPerPage').textContent = filteredRecords.length;
+  
+  if (pageRecords.length === 0) {
+    $('dataTable').innerHTML = '<tr><td colspan="16" style="text-align: center; padding: 20px; color: #999;">No records found</td></tr>';
+    return;
+  }
+
+  pageRecords.forEach(record => {
+    const d = record.data;
+    $('dataTable').innerHTML += `
+      <tr>
+        <td>${d.district || "-"}</td>
+        <td>${d.area || "-"}</td>
+        <td>${d.barangay || "-"}</td>
+        <td>${d.orgName || "-"}</td>
+        <td>${d.presidentName || "-"}</td>
+        <td>${d.contactNumber || "-"}</td>
+        <td>${d.address || "-"}</td>
+        <td>${d.male || "-"}</td>
+        <td>${d.female || "-"}</td>
+        <td>${d.membersList ? `<a href="${d.membersList}" target="_blank">📋 View</a>` : "-"}</td>
+        <td>${d.totalMembers || "-"}</td>
+        <td>${d.status || "-"}</td>
+        <td>${d.dateRegisteredDOLE || "-"}</td>
+        <td>${d.doleRegNo || "-"}</td>
+        <td>${d.yearRegistered || "-"}</td>
+        <td>
+          <button onclick="editRecord('${record.id}')">Edit</button>
+          <button onclick="deleteRecord('${record.id}')">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+/* Update Pagination Controls */
+function updatePagination() {
+  const totalPages = Math.ceil(filteredRecords.length / recordsPerPage) || 1;
+  
+  $('currentPage').textContent = currentPage;
+  $('totalPages').textContent = totalPages;
+  
+  // Prev/Next buttons
+  $('prevBtn').disabled = currentPage === 1;
+  $('nextBtn').disabled = currentPage === totalPages;
+  
+  // Page numbers
+  let pageHTML = '';
+  const maxPagesToShow = 4;
+  let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+  let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+  
+  if (endPage - startPage < maxPagesToShow - 1) {
+    startPage = Math.max(1, endPage - maxPagesToShow + 1);
+  }
+  
+  if (startPage > 1) pageHTML += '<button onclick="goToPage(1)">1</button><span>...</span>';
+  
+  for (let i = startPage; i <= endPage; i++) {
+    pageHTML += `<button onclick="goToPage(${i})" class="${i === currentPage ? 'active' : ''}">${i}</button>`;
+  }
+  
+  if (endPage < totalPages) pageHTML += `<span>...</span><button onclick="goToPage(${totalPages})">${totalPages}</button>`;
+  
+  $('pageNumbers').innerHTML = pageHTML;
+}
+
+window.goToPage = (page) => {
+  currentPage = page;
+  renderTable();
+  updatePagination();
+}
+
+window.nextPage = () => {
+  const totalPages = Math.ceil(filteredRecords.length / recordsPerPage) || 1;
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderTable();
+    updatePagination();
+  }
+}
+
+window.previousPage = () => {
+  if (currentPage > 1) {
+    currentPage--;
+    renderTable();
+    updatePagination();
+  }
+}
+
+/* Delete */
+window.deleteRecord = async id => {
+  const snapshot = await getDocs(collection(db, "organizations"));
+  let recordData = {};
+  
+  snapshot.forEach(s => {
+    if (s.id === id) recordData = s.data();
+  });
+
+  const confirmDelete = confirm(`Are you sure you want to delete this organization?\n\n"${recordData.orgName}"\n\nThis action cannot be undone.`);
+  
+  if (confirmDelete) {
+    await deleteDoc(doc(db, "organizations", id));
+    alert("✅ Record Deleted!");
+    loadData();
+  }
+};
+
+/* Find and Remove Duplicates */
+window.findAndRemoveDuplicates = async () => {
+  const snapshot = await getDocs(collection(db, "organizations"));
+  const records = [];
+  const seenOrgNames = new Map();
+  let duplicatesFound = 0;
+
+  snapshot.forEach(s => {
+    records.push({ id: s.id, data: s.data() });
+  });
+
+  // Group by organization name (case-insensitive)
+  records.forEach(record => {
+    const orgName = (record.data.orgName || "").toLowerCase().trim();
+    if (!seenOrgNames.has(orgName)) {
+      seenOrgNames.set(orgName, []);
+    }
+    seenOrgNames.get(orgName).push(record);
+  });
+
+  // Find duplicates
+  let duplicatesList = [];
+  for (const [orgName, group] of seenOrgNames.entries()) {
+    if (group.length > 1) {
+      duplicatesList.push({ orgName: group[0].data.orgName, count: group.length, records: group });
+      duplicatesFound++;
+    }
+  }
+
+  if (duplicatesList.length === 0) {
+    alert("✅ No duplicates found!");
+    return;
+  }
+
+  let message = `Found ${duplicatesList.length} duplicate organization(s):\n\n`;
+  duplicatesList.slice(0, 5).forEach(dup => {
+    message += `• ${dup.orgName} (${dup.count} copies)\n`;
+  });
+  if (duplicatesList.length > 5) {
+    message += `\n...and ${duplicatesList.length - 5} more`;
+  }
+  message += `\n\nClick OK to delete duplicate records (keeping the first one of each).`;
+
+  if (confirm(message)) {
+    let deleted = 0;
+    for (const group of duplicatesList) {
+      // Keep first, delete rest
+      for (let i = 1; i < group.records.length; i++) {
+        await deleteDoc(doc(db, "organizations", group.records[i].id));
+        deleted++;
+      }
+    }
+    alert(`✅ Deleted ${deleted} duplicate record(s)!`);
+    loadData();
+  }
+};
+
+/* Edit */
+window.editingRecordId = null;
+
+window.editRecord = async id => {
+  window.editingRecordId = id;
+  const snapshot = await getDocs(collection(db, "organizations"));
+  let currentData = {};
+  
+  snapshot.forEach(s => {
+    if (s.id === id) currentData = s.data();
+  });
+
+  if (!currentData.orgName) return alert("Record not found!");
+
+  // Populate modal with current data
+  $("modal_district").value = currentData.district || "";
+  $("modal_area").value = currentData.area || "";
+  $("modal_barangay").value = currentData.barangay || "";
+  $("modal_orgName").value = currentData.orgName || "";
+  $("modal_presidentName").value = currentData.presidentName || "";
+  $("modal_contactNumber").value = currentData.contactNumber || "";
+  $("modal_address").value = currentData.address || "";
+  $("modal_male").value = currentData.male || 0;
+  $("modal_female").value = currentData.female || 0;
+  $("modal_membersList").value = currentData.membersList || "";
+  $("modal_totalMembers").value = currentData.totalMembers || 0;
+  $("modal_status").value = currentData.status || "NOT REGISTERED";
+  $("modal_dateRegisteredDOLE").value = currentData.dateRegisteredDOLE || "";
+  $("modal_doleRegNo").value = currentData.doleRegNo || "";
+  $("modal_yearRegistered").value = currentData.yearRegistered || "";
+
+  // Show modal
+  $("editModal").classList.add("show");
+};
+
+window.closeEditModal = () => {
+  $("editModal").classList.remove("show");
+  window.editingRecordId = null;
+};
+
+window.saveEditedRecord = async () => {
+  if (!window.editingRecordId) return;
+
+  const updatedData = {
+    district: $("modal_district").value,
+    area: $("modal_area").value,
+    barangay: $("modal_barangay").value,
+    orgName: $("modal_orgName").value,
+    presidentName: $("modal_presidentName").value,
+    contactNumber: $("modal_contactNumber").value,
+    address: $("modal_address").value,
+    male: Number($("modal_male").value) || 0,
+    female: Number($("modal_female").value) || 0,
+    membersList: $("modal_membersList").value,
+    totalMembers: Number($("modal_totalMembers").value) || 0,
+    status: $("modal_status").value,
+    dateRegisteredDOLE: $("modal_dateRegisteredDOLE").value,
+    doleRegNo: $("modal_doleRegNo").value,
+    yearRegistered: $("modal_yearRegistered").value
+  };
+
+  await updateDoc(doc(db, "organizations", window.editingRecordId), updatedData);
+  alert("✅ Record Updated!");
+  closeEditModal();
+  loadData();
+};
+
+/* Excel Import */
+$("importBtn").addEventListener("click", async () => {
+  const file = $("excelFile").files[0];
+  if (!file) return alert("Please select an Excel file!");
+
+  try {
+    $("importBtn").textContent = "Importing...";
+    $("importBtn").disabled = true;
+
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data, { type: "array" });
+
+    let imported = 0;
+    let errors = [];
+
+    // Loop through all sheets in the workbook
+    for (const sheetName of workbook.SheetNames) {
+      const sheet = workbook.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+
+      if (rows.length < 2) continue; // Skip sheets with no data
+
+      const headers = rows[0];
+
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        if (row.every(cell => !cell && cell !== 0)) continue;
+
+        const rowData = {};
+        headers.forEach((header, index) => { rowData[header] = row[index] || ""; });
+
+        const toNumber = v => isNaN(Number(v)) ? 0 : Number(v);
+        const formatDate = v => {
+          if (!v) return "";
+          if (typeof v === 'number') {
+            const excelEpoch = new Date(1900,0,1);
+            return new Date(excelEpoch.getTime() + (v-2)*86400000).toISOString().split('T')[0];
+          }
+          const d = new Date(v);
+          return isNaN(d.getTime()) ? "" : d.toISOString().split('T')[0];
+        };
+
+        const record = {
+          district: rowData["District"] || "",
+          area: rowData["Area"] || "",
+          barangay: rowData["Barangay"] || "",
+          orgName: rowData["Organization Name"] || "",
+          presidentName: rowData["President's Name"] || "",
+          contactNumber: (rowData["Contact Number"] || "").toString(),
+          address: rowData["Address"] || "",
+          male: toNumber(rowData["Male"]),
+          female: toNumber(rowData["Female"]),
+          membersList: rowData["LIST OF MEMBERS"] || "",
+          totalMembers: toNumber(rowData["Total no. of Members"]),
+          status: rowData["DOLE Registration Status"] || "NOT REGISTERED",
+          dateRegisteredDOLE: formatDate(rowData["Date Registered to DOLE"]),
+          doleRegNo: (rowData["DOLE Registration No."] || "").toString(),
+          yearRegistered: (rowData["Date Registered (year)"] || "").toString(),
+          createdAt: new Date()
+        };
+
+        if (!record.orgName.trim()) { errors.push(`Sheet "${sheetName}" Row ${i+1}: Org Name required`); continue; }
+
+        await addDoc(collection(db, "organizations"), record);
+        imported++;
+      }
+    }
+
+    let message = `✅ Excel Import Complete!\nRows Added: ${imported}`;
+    if (errors.length > 0) message += `\nErrors: ${errors.slice(0,5).join("\n")}${errors.length>5 ? `\n...and ${errors.length-5} more` : ""}`;
+    alert(message);
+
+    loadData();
+  } catch(e) {
+    alert(`❌ Import Failed!\n${e.message}`);
+  } finally {
+    $("importBtn").textContent = "Import Excel";
+    $("importBtn").disabled = false;
+  }
+});
+
+$("districtFilter").addEventListener("change", loadData);
+$("searchInput").addEventListener("input", loadData);
+$("findDuplicatesBtn").addEventListener("click", findAndRemoveDuplicates);
+loadData();
+</script>
+
+</body>
+</html>
