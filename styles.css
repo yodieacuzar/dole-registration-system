@@ -5,321 +5,265 @@
 }
 
 body {
-  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f7fb;
+  color: #1f2937;
+  padding: 24px;
   min-height: 100vh;
 }
 
 .container {
-  max-width: 1600px;
-  margin: auto;
-  background: #fff;
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  max-width: 1500px;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 32px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
 }
 
 h1 {
+  margin-bottom: 28px;
   text-align: center;
-  color: #0d5e47;
-  margin-bottom: 40px;
-  font-size: 2.8em;
-  font-weight: 800;
-  letter-spacing: -1px;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
 }
 
 h3 {
-  text-align: left;
-  color: #0d5e47;
-  margin: 35px 0 20px 0;
-  font-size: 1.4em;
-  font-weight: 700;
-  border-left: 5px solid #10b981;
-  padding-left: 15px;
+  margin: 28px 0 16px;
+  padding-bottom: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 input,
 select {
-  padding: 12px 15px;
-  margin: 8px 0;
   width: 100%;
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
+  padding: 10px 12px;
+  margin: 6px 0;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111827;
   font-size: 14px;
-  transition: all 0.3s ease;
-  background: #f8fafc;
-  color: #2d3748;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 input:focus,
 select:focus {
   outline: none;
-  border-color: #10b981;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
 button {
-  padding: 12px 24px;
-  margin: 8px 0;
   width: 100%;
+  padding: 11px 16px;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
+  background: #111827;
+  color: #fff;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.4);
+  opacity: 0.96;
+  transform: translateY(-1px);
 }
 
 button:active {
   transform: translateY(0);
 }
 
-#deleteAllBtn {
-  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%) !important;
-}
-
-#deleteAllBtn:hover {
-  box-shadow: 0 10px 20px rgba(245, 101, 101, 0.3) !important;
-}
-
-#importBtn,
 #orgForm button,
-#findDuplicatesBtn {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+#findDuplicatesBtn,
+.btn-submit {
+  background: #111827;
 }
 
-#importBtn:hover,
-#orgForm button:hover,
-#findDuplicatesBtn:hover {
-  box-shadow: 0 10px 20px rgba(6, 182, 212, 0.4);
+#findDuplicatesBtn {
+  width: auto;
+  min-width: 220px;
+  background: #374151;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 30px;
+  margin-top: 16px;
+  background: #fff;
   font-size: 13px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-  border-radius: 10px;
-  overflow: hidden;
-  table-layout: auto;
+  border: 1px solid #e5e7eb;
 }
 
 th,
 td {
-  border: 1px solid #d1d5db;
-  padding: 12px 10px;
+  padding: 10px 8px;
+  border: 1px solid #e5e7eb;
   text-align: left;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  min-width: 80px;
+  vertical-align: top;
+  word-break: break-word;
+  white-space: normal;
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+  transform: none;
 }
 
 th {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #fff;
-  font-weight: 700;
-  position: sticky;
-  top: 0;
+  background: #f3f4f6;
+  color: #111827;
   font-size: 12px;
+  font-weight: 700;
   white-space: nowrap;
-  padding: 12px 8px;
+}
+
+.action-cell {
+  width: 120px;
+  white-space: nowrap;
 }
 
 tbody tr:nth-child(even) {
-  background-color: #f9fafb;
+  background: #fafafa;
 }
 
 tbody tr:hover {
-  background-color: #f3f4f6;
-  transition: background-color 0.2s ease;
-}
-
-td {
-  color: #374151;
-  vertical-align: middle;
-  max-width: 150px;
+  background: #f9fafb;
 }
 
 td button {
-  padding: 8px 12px;
   width: auto;
-  margin: 0 4px 4px 0;
+  min-width: 64px;
+  margin: 2px 4px 2px 0;
+  padding: 7px 10px;
   font-size: 12px;
   display: inline-block;
   white-space: nowrap;
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+  transform: none;
 }
 
-td button:last-child {
-  margin-right: 0;
-}
-
-/* Table Wrapper for Responsive Design */
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  border-radius: 10px;
-  margin-top: 20px;
+.action-cell button {
+  display: inline-block;
+  width: auto;
+  min-width: 66px;
 }
 
 td button:nth-child(1) {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: #111827;
 }
 
 td button:nth-child(2) {
-  background: linear-gradient(135deg, #e53e3e 0%, #e53e3e 100%);
+  background: #b91c1c;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 16px;
 }
 
 hr {
   border: none;
-  height: 2px;
-  background: linear-gradient(to right, transparent, #e2e8f0, transparent);
-  margin: 35px 0;
+  border-top: 1px solid #e5e7eb;
+  margin: 28px 0;
 }
 
-/* Summary Section */
 .summary-container {
   display: flex;
-  gap: 20px;
+  gap: 16px;
   flex-wrap: wrap;
-  font-size: 16px;
-  margin: 25px 0;
+  margin: 18px 0;
 }
 
 .summary-item {
   flex: 1;
-  min-width: 200px;
-  padding: 25px;
+  min-width: 180px;
+  padding: 18px 20px;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
-  border: none;
+  background: #f9fafb;
+  color: #111827;
+  font-weight: 600;
 }
 
 .summary-item:nth-child(2) {
-  background: linear-gradient(135deg, #ea4e4e 0%, #d3350e 100%);
-  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);
+  background: #fef2f2;
+  border-color: #fecaca;
 }
 
 .summary-item b {
-  font-size: 2em;
   display: block;
-  margin-top: 10px;
+  margin-top: 8px;
+  font-size: 1.7rem;
+  line-height: 1;
 }
 
-/* Pagination Styling */
 .pagination-container {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  margin: 30px 0;
-  padding: 15px;
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-  border-radius: 10px;
   flex-wrap: wrap;
+  margin: 24px 0 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
 }
 
 .pagination-container #prevBtn,
 .pagination-container #nextBtn {
-  padding: 6px 10px;
-  min-width: auto;
-  margin: 0 2px;
-  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 12px;
-  transition: all 0.2s ease;
-}
-
-.pagination-container #prevBtn:hover:not(:disabled),
-.pagination-container #nextBtn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
-}
-
-.pagination-container #prevBtn:disabled,
-.pagination-container #nextBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
+  width: auto;
+  background: #111827;
 }
 
 .page-numbers {
   display: flex;
-  gap: 5px;
   align-items: center;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .page-numbers button {
-  padding: 6px 10px;
-  min-width: auto;
-  margin: 2px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 12px;
-  transition: all 0.3s ease;
-}
-
-.page-numbers button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(16, 185, 129, 0.4);
-}
-
-.page-numbers span {
-  color: #6b7280;
-  font-weight: bold;
+  width: auto;
+  min-width: 32px;
+  padding: 8px 10px;
+  background: #e5e7eb;
+  color: #111827;
 }
 
 .page-numbers button.active {
-  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+  background: #111827;
+  color: #fff;
 }
 
 .page-info {
   text-align: center;
   color: #4b5563;
   font-size: 14px;
-  margin: 15px 0;
-  padding: 10px;
+  margin-top: 6px;
 }
 
-.page-info p {
-  margin: 0;
-}
-
-/* Form Styling */
 #orgForm {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  padding: 30px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
-  margin-bottom: 25px;
-  border: 2px solid #86efac;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
 .form-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-bottom: 15px;
+  gap: 14px;
+  margin-bottom: 14px;
 }
 
 .form-row input,
@@ -328,16 +272,13 @@ hr {
 }
 
 .btn-submit {
-  margin-top: 15px;
-  font-size: 16px;
-  font-weight: 700;
-  padding: 14px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  margin-top: 8px;
+  width: 100%;
+  background: #111827;
 }
 
-.btn-submit:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 25px rgba(16, 185, 129, 0.4);
+input[type="date"] {
+  padding: 9px 12px;
 }
 
 /* File Input */
@@ -447,38 +388,6 @@ input[type="date"] {
 
 #searchInput::placeholder {
   color: #a0aec0;
-}
-
-/* File input styling */
-#excelFile {
-  padding: 12px 15px;
-  border: 2px dashed #10b981;
-  border-radius: 10px;
-  background: #f0fdf4;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-#excelFile:hover {
-  background: #dcfce7;
-  border-color: #059669;
-}
-
-#excelFile::file-selector-button {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  margin-right: 10px;
-  transition: all 0.3s ease;
-}
-
-#excelFile::file-selector-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 12px rgba(16, 185, 129, 0.4);
 }
 
 /* District Filter styling */
@@ -693,7 +602,6 @@ body.dark-mode #activityLog {
 }
 
 body.dark-mode #searchInput,
-body.dark-mode #excelFile,
 body.dark-mode #districtFilter {
   background: #34495e;
   color: #ecf0f1;
@@ -701,14 +609,9 @@ body.dark-mode #districtFilter {
 }
 
 body.dark-mode #searchInput:focus,
-body.dark-mode #excelFile:focus,
 body.dark-mode #districtFilter:focus {
   border-color: #3498db;
   background: #2c3e50;
-}
-
-body.dark-mode #excelFile {
-  border-color: #3498db;
 }
 
 /* Dark Mode Toggle Button */
@@ -778,7 +681,6 @@ body.dark-mode button:hover {
   box-shadow: 0 10px 20px rgba(16, 185, 129, 0.5);
 }
 
-body.dark-mode #importBtn:hover,
 body.dark-mode #orgForm button:hover,
 body.dark-mode #findDuplicatesBtn:hover {
   box-shadow: 0 10px 20px rgba(72, 187, 120, 0.3);
@@ -870,17 +772,6 @@ body.dark-mode #searchInput:focus {
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
 }
 
-body.dark-mode #excelFile {
-  background: #1e5e55;
-  border-color: #10b981;
-  color: #d1fae5;
-}
-
-body.dark-mode #excelFile:hover {
-  background: #2a7a6f;
-  border-color: #059669;
-}
-
 body.dark-mode #districtFilter {
   background: #1e5e55;
   border-color: #047857;
@@ -937,3 +828,70 @@ body.dark-mode hr {
   background: linear-gradient(to right, transparent, #4a5568, transparent);
 }
 
+/* =========================
+   EXCEL IMPORT
+========================== */
+
+.excel-import-container {
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f9fafb;
+}
+
+.excel-import-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.excel-import-controls input[type="file"] {
+    flex: 1;
+    min-width: 250px;
+}
+
+.excel-preview-btn {
+    background: #2563eb;
+}
+
+.excel-import-btn {
+    background: #059669;
+}
+
+.excel-import-btn:disabled,
+.excel-preview-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.excel-import-status {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #fff;
+    border-left: 4px solid #3b82f6;
+    font-size: 13px;
+}
+
+.excel-import-status.success {
+    border-left-color: #16a34a;
+    color: #166534;
+    background: #f0fdf4;
+}
+
+.excel-import-status.error {
+    border-left-color: #dc2626;
+    color: #991b1b;
+    background: #fef2f2;
+}
+
+.excel-import-status.warning {
+    border-left-color: #f59e0b;
+    color: #92400e;
+    background: #fffbeb;
+}
+
+#excelPreviewWrapper table {
+    min-width: 1400px;
+}
